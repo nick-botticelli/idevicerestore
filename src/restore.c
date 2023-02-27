@@ -846,6 +846,10 @@ static int restore_handle_baseband_updater_output_data(restored_client_t restore
 	return result;
 }
 
+void restore_set_ignore_bb_fail(int input) {
+    g_ignore_bb_fail = input;
+}
+
 static int restore_handle_bb_update_status_msg(restored_client_t client, plist_t msg)
 {
 	int result = -1;
@@ -853,7 +857,7 @@ static int restore_handle_bb_update_status_msg(restored_client_t client, plist_t
 	uint8_t accepted = 0;
 	plist_get_bool_val(node, &accepted);
 
-	if (!accepted) {
+	if (!accepted && !g_ignore_bb_fail) {
 		error("ERROR: device didn't accept BasebandData\n");
 		return result;
 	}
