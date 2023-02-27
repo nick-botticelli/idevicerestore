@@ -3514,16 +3514,8 @@ static int restore_send_firmware_updater_data(restored_client_t restore, struct 
 	} else if ((strcmp(s_updater_name, "Cryptex1") == 0) || (strcmp(s_updater_name, "Cryptex1LocalPolicy") == 0)) {
 		fwdict = restore_get_cryptex1_firmware_data(restore, client, build_identity, p_info, arguments);
 		if (fwdict == NULL) {
-            info("Warning: %s: Couldn't get %s firmware data using current build_identity, trying again using latest build manifest\n", __func__, s_updater_name);
-            if(!client->sepBuildIdentity) {
-                error("ERROR: %s: Couldn't get %s firmware data because latest build manifest is somehow unknown, this is not normal, RIPERONI :(\n", __func__, s_updater_name);
-                goto error_out;
-            }
-            fwdict = restore_get_cryptex1_firmware_data(restore, client, client->sepBuildIdentity, p_info, arguments);
-            if (fwdict == NULL) {
-                error("ERROR: %s: Couldn't get %s firmware data a second time even using latest build manifest, this is not normal, RIPERONI :(\n", __func__, s_updater_name);
-                goto error_out;
-            }
+			error("ERROR: %s: Couldn't get %s firmware data\n", __func__, s_updater_name);
+			goto error_out;
 		}
 	} else {
 		error("ERROR: %s: Got unknown updater name '%s'.\n", __func__, s_updater_name);
