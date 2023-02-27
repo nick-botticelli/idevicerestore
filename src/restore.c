@@ -3356,15 +3356,17 @@ static plist_t restore_get_cryptex1_firmware_data(restored_client_t restore, str
         debug_plist(request);
     }
 
-    FILE *testf = fopen("/tmp/cryptex_request.plist", "rb");
+    FILE *testf = fopen("/tmp/cryptex_ticket.plist", "rb");
     fseek(testf, 0, SEEK_END);
     size_t testf_sz = ftell(testf);
     fseek(testf, 0, SEEK_SET);
     char *testf_buf = calloc(1, testf_sz);
     fread(testf_buf, 1, testf_sz, testf);
     plist_from_xml(testf_buf, testf_sz, &response);
+    info("DEBUG: 1337: %d: custom cryptex ticket:\n");
+    debug_plist2(response);
 
-	response = tss_request_send(request, client->tss_url);
+//	response = tss_request_send(request, client->tss_url);
 	plist_free(request);
 	if (response == NULL) {
 		error("ERROR: Unable to fetch %s ticket\n", s_updater_name);
