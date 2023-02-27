@@ -3367,7 +3367,7 @@ static plist_t restore_get_cryptex1_firmware_data(restored_client_t restore, str
     char *testf_buf = calloc(1, testf_sz);
     fread(testf_buf, 1, testf_sz, testf);
     plist_from_xml(testf_buf, testf_sz, &response);
-    info("DEBUG: 1337: %d: custom cryptex ticket:\n");
+    info("DEBUG: 1337: %d: custom cryptex ticket:\n", __LINE__);
     debug_plist2(response);
 
 //	response = tss_request_send(request, client->tss_url);
