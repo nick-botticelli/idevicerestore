@@ -141,6 +141,7 @@ struct idevicerestore_client_t {
 	unsigned char* sepnonce;
 	int sepnonce_size;
 	int image4supported;
+    int virtualdevice;
 	plist_t build_manifest;
 	plist_t preflight_info;
 	char* udid;

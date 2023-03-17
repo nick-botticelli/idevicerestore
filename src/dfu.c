@@ -266,6 +266,23 @@ int dfu_is_image4_supported(struct idevicerestore_client_t* client)
 	return (device_info->ibfl & IBOOT_FLAG_IMAGE4_AWARE);
 }
 
+int dfu_is_virtual_device(struct idevicerestore_client_t* client)
+{
+    if(client->dfu == NULL) {
+        if (dfu_client_new(client) < 0) {
+            return 0;
+        }
+    }
+
+    const struct irecv_device_info *device_info = irecv_get_device_info(client->dfu->client);
+    if (!device_info) {
+        return 0;
+    }
+
+    return (device_info->cpid == 0xfe00
+            || (device_info->cpid == 0x8103 && (device_info->bdid == 0xf8 || device_info->bdid == 0xf9)));
+}
+
 int dfu_get_ap_nonce(struct idevicerestore_client_t* client, unsigned char** nonce, int* nonce_size)
 {
 	if(client->dfu == NULL) {

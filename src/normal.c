@@ -367,6 +367,29 @@ int normal_is_image4_supported(struct idevicerestore_client_t* client)
 	return bval;
 }
 
+int normal_is_virtual_device(struct idevicerestore_client_t* client)
+{
+    uint64_t cpid = -1;
+    uint64_t bdid = -1;
+    
+    plist_t node = normal_get_lockdown_value(client, NULL, "ChipID");
+    if (!node || plist_get_node_type(node) != PLIST_UINT) {
+        return 0;
+    }
+    plist_get_uint_val(node, &cpid);
+    plist_free(node);
+    
+    node = normal_get_lockdown_value(client, NULL, "BoardID");
+    if (!node || plist_get_node_type(node) != PLIST_UINT) {
+        return 0;
+    }
+    plist_get_uint_val(node, &bdid);
+    plist_free(node);
+    
+    return (int) (cpid == 0xfe00
+                  || (cpid == 0x8103 && (bdid == 0xf8 || bdid == 0xf9)));
+}
+
 int normal_get_preflight_info(struct idevicerestore_client_t* client, plist_t *preflight_info)
 {
 	uint8_t has_telephony_capability = 0;

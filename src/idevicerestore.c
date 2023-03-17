@@ -677,6 +677,11 @@ int idevicerestore_start(struct idevicerestore_client_t* client)
 
 	client->image4supported = is_image4_supported(client);
 	info("Device supports Image4: %s\n", (client->image4supported) ? "true" : "false");
+    
+    client->virtualdevice = is_virtual_device(client);
+    if (client->virtualdevice) {
+        info("Device is virtual\n");
+    }
 
 	if (client->flags & FLAG_CUSTOM) {
 		/* prevent signing custom firmware */
@@ -1899,6 +1904,36 @@ int is_image4_supported(struct idevicerestore_client_t* client)
 		return 0;
 	}
 	return res;
+}
+
+int is_virtual_device(struct idevicerestore_client_t* client)
+{
+    int res = 0;
+    int mode = _MODE_UNKNOWN;
+
+    if (client->mode) {
+        mode = client->mode->index;
+    }
+
+    switch (mode) {
+    case _MODE_NORMAL:
+        res = normal_is_virtual_device(client);
+        break;
+    case _MODE_RESTORE:
+        res = restore_is_virtual_device(client);
+        break;
+    case _MODE_DFU:
+        res = dfu_is_virtual_device(client);
+        break;
+    case _MODE_RECOVERY:
+        res = recovery_is_virtual_device(client);
+        break;
+    default:
+        error("ERROR: Device is in an invalid state\n");
+        return 0;
+    }
+    
+    return res;
 }
 
 int get_ap_nonce(struct idevicerestore_client_t* client, unsigned char** nonce, int* nonce_size)

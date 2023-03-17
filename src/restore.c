@@ -341,6 +341,55 @@ int restore_is_image4_supported(struct idevicerestore_client_t* client)
 	return result;
 }
 
+int restore_is_virtual_device(struct idevicerestore_client_t* client)
+{
+    int result = 0;
+    plist_t hwinfo = NULL;
+    idevice_t device = NULL;
+    restored_client_t restore = NULL;
+    restored_error_t restore_error = RESTORE_E_SUCCESS;
+
+    if (idevice_new(&device, client->udid) != IDEVICE_E_SUCCESS) {
+        error("ERROR: Could not connect to device %s\n", client->udid);
+        return -1;
+    }
+
+    restore_error = restored_client_new(device, &restore, "idevicerestore");
+    if (restore_error != RESTORE_E_SUCCESS) {
+        idevice_free(device);
+        return -1;
+    }
+
+    if (restored_query_type(restore, NULL, NULL) != RESTORE_E_SUCCESS) {
+        restored_client_free(restore);
+        idevice_free(device);
+        return -1;
+    }
+
+    restore_error = restored_query_value(restore, "HardwareInfo", &hwinfo);
+    if (restore_error == RESTORE_E_SUCCESS) {
+        uint64_t cpid = -1;
+        uint64_t bdid = -1;
+        
+        plist_t node = plist_dict_get_item(hwinfo, "ChipID");
+        if (node && plist_get_node_type(node) == PLIST_UINT) {
+            plist_get_uint_val(node, &cpid);
+        }
+        
+        node = plist_dict_get_item(hwinfo, "BoardID");
+        if (node && plist_get_node_type(node) == PLIST_UINT) {
+            plist_get_uint_val(node, &bdid);
+        }
+        
+        result = (cpid == 0xfe00
+                  || (cpid == 0x8103 && (bdid == 0xf8 || bdid == 0xf9)));
+    }
+    restored_client_free(restore);
+    idevice_free(device);
+
+    return result;
+}
+
 int restore_reboot(struct idevicerestore_client_t* client)
 {
 	if(client->restore == NULL) {

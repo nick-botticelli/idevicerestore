@@ -97,6 +97,7 @@ int check_mode(struct idevicerestore_client_t* client);
 irecv_device_t get_irecv_device(struct idevicerestore_client_t* client);
 int get_ecid(struct idevicerestore_client_t* client, uint64_t* ecid);
 int is_image4_supported(struct idevicerestore_client_t* client);
+int is_virtual_device(struct idevicerestore_client_t* client);
 int get_ap_nonce(struct idevicerestore_client_t* client, unsigned char** nonce, int* nonce_size);
 int get_sep_nonce(struct idevicerestore_client_t* client, unsigned char** nonce, int* nonce_size);
 int get_tss_response(struct idevicerestore_client_t* client, plist_t build_identity, plist_t* tss);
