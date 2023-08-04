@@ -151,10 +151,13 @@ int recovery_set_autoboot(struct idevicerestore_client_t* client, int enable) {
 
 int recovery_enter_restore(struct idevicerestore_client_t* client, plist_t build_identity)
 {
+    // TODO: This needs fixing!
 	if (client->build_major >= 8) {
-		client->restore_boot_args = strdup("rd=md0 nand-enable-reformat=1 -progress");
+        info("build_major >= 8!\n");
+		client->restore_boot_args = strdup("rd=md0 nand-enable-reformat=1 -progress -restore serial=3 debug=0x14e");
 	} else if (client->macos_variant) {
-		client->restore_boot_args = strdup("rd=md0 nand-enable-reformat=1 -progress -restore");
+        info("macos_variant!\n");
+		client->restore_boot_args = strdup("rd=md0 nand-enable-reformat=1 -progress -restore serial=3 debug=0x14e");
 	}
 
 	/* upload data to make device boot restore mode */

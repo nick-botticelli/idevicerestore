@@ -540,7 +540,7 @@ int dfu_enter_recovery(struct idevicerestore_client_t* client, plist_t build_ide
 				return -1;
 			}
 
-			if (dfu_send_command(client, "setenvnp boot-args rd=md0 nand-enable-reformat=1 -progress -restore") < 0) {
+			if (dfu_send_command(client, "setenvnp boot-args rd=md0 nand-enable-reformat=1 -progress -restore serial=3 debug=0x14e") < 0) {
 				mutex_unlock(&client->device_event_mutex);
 				error("ERROR: Unable to send command to device\n");
 				irecv_close(client->dfu->client);
